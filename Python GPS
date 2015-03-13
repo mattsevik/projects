@@ -1,0 +1,67 @@
+mport math
+from math import sin, cos, atan, sqrt
+
+#Calculate the distance from point to point by converting the
+#lat and long values into radians
+def calculate_distance(lat1, lat2, lon1, lon2):
+    R = 3961 #Earth's radius in miles
+    lat1 = math.radians(lat1)
+    lat2 = math.radians(lat2)
+    lon1 = math.radians(lon1)
+    lon2 = math.radians(lon2)
+    dlon = lon2 - lon1 
+    dlat = lat2 - lat1 
+    a = (sin(dlat/2))**2 + cos(lat1) * cos(lat2) * (sin(dlon/2))**2 
+    c = 2 * atan( sqrt(a)) 
+    d = R * c
+    return d
+
+#Program output
+def output():
+    print("-" * 55)
+    print("%-10s %-10s %-10s %-10s %-10s" % ("Time", "Latitude", "Longitude", "Distance", "Pace"))
+    print("%-10s %-10s %-10s %-10s %-10s" % ("(hh:mm:ss)", "(deg)", "(deg)", "(miles)", "(min/mile)"))
+    print("-" * 55)
+                                   
+
+
+#main
+print("Welcome to Running Mate \n")
+gps_data = input("Enter the full path for the file: ")
+gps_var = open(gps_data, "r")
+
+first_time = True
+fastest_pace = 999999
+#get data from file and strip it into parts
+for pos in gps_var:
+    pos = pos.strip()
+    fields = pos.split(" ")
+    time = fields[0]
+    split_time = time.split(":")
+    time_seconds = int(split_time[0]) * 3600 + int(split_time[1]) * 60 + int(split_time[2])
+
+    #loop through data to figure out pace and distance
+    if first_time == True:
+        prev_time = time_seconds
+        prev_lat = float(fields[1])
+        prev_long = float(fields[2])
+        initial_time = time_seconds
+        initial_lat = float(fields[1])
+        initial_long = float(fields[2])
+        first_time = False
+        output()
+        print("%-10s %-10s %-10s %-10s %-10s" % (time, fields[1], fields[2], "*****", "*****"))
+    else:
+        new_time = time_seconds
+        lat = float(fields[1])
+        long = float(fields[2])
+        distance = calculate_distance(prev_lat, lat, prev_long, long)
+        change_in_time = new_time - prev_time
+        calculate_pace = (change_in_time / 60) / distance
+        prev_time = new_time
+        prev_lat = lat
+        prev_long = long
+        print("%-10s %-10s %-10s %.3f %-4s %.3f  " % (time, fields[1], fields[2], distance, " ",  calculate_pace))
+
+                
+        
