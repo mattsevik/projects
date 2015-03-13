@@ -1,0 +1,122 @@
+import random
+
+# reads the file input from the user in Main then
+# strips it to make the list of words
+class Hangman_Reader:
+    def read_file(self, fname):
+        filevar = open(fname, "r")
+        wordlist = []
+        for line in filevar:
+            line = line.strip().lower()
+            if line != "":
+                wordlist.append(line)
+        return wordlist
+
+# takes the wordlist from Hangman_Reader and randomly
+# chooses a word from the list
+class Hangman_Picker:
+    def pick(self, wordlist):
+        chosen_word = random.choice(wordlist)
+        return Hangman_Target(chosen_word)
+
+# takes the chosen word from Hangman_Picker and initalizes it
+# in order to do the funtions to play the game
+class Hangman_Target:
+    def __init__(self,chosen_word):
+        self.target = chosen_word
+        self.status = []
+        for i in range(len(self.target)):
+            if (self.target[i] != " "):
+                self.status.append("_")
+            else:
+                self.status.append(" ")
+
+    #checks to see if the user guess is in the word they are guessing
+    def check_letter(self, user_guess):
+        matches = 0
+        for i in range(len(self.target)):
+            if self.target[i] == user_guess and self.status[i] == "_":
+                self.status[i] = user_guess
+                matches = matches + 1
+        return matches
+	
+    # makes a string version of status showing how much of the word
+    #has been guessed
+    def to_string(self, chosen_word):
+        chosen_word= ""
+        chosen_word = chosen_word.join(status)
+
+    # returns the target (word being guessed)
+    def get_target(self):
+        print("Your puzzle: ")
+        phrase = ""
+        phrase = phrase.join(self.status)
+        return phrase
+
+    # returns true if there are no more letters to be guessed in
+    # the target word
+    def is_complete(self):
+        if '_' not in self.status:
+            return True
+        else:
+            return False
+        
+    
+# sketches the different hangman pictures depending on how     
+# many wrong guesses the user has made    
+class Hangman_Sketcher:
+    def draw(self, incorrect_guesses):
+        print("Here is your hangman...")
+        if incorrect_guesses == 0:
+            print("----\n|\n|\n|\n|\n|\n|\n")
+        elif incorrect_guesses == 1:
+            print("----\n|   O\n|\n|\n|\n|\n|\n")
+        elif incorrect_guesses == 2:
+            print("----\n|   O\n|   |\n|\n|\n|\n|\n")
+        elif incorrect_guesses == 3:
+            print("----\n|   O\n|   |\n|   |\n|\n|\n|\n")
+        elif incorrect_guesses == 4:
+            print("----\n|   O\n|   |\n|  -|\n|\n|\n|\n")
+        elif incorrect_guesses == 5:
+            print("----\n|   O\n|   |\n|  -|-\n|\n|\n|\n")
+        elif incorrect_guesses == 6:
+            print("----\n|   O\n|   |\n|  -|-\n|   |\n|\n|\n")
+        elif incorrect_guesses == 7:
+            print("----\n|   O\n|   |\n|  -|-\n|   |\n|  /\n|\n")
+        elif incorrect_guesses == 8:
+            print("----\n|   O\n|   |\n|  -|-\n|   |\n|  / \\\n|\n")
+        elif incorrect_guesses == 9:
+            print("----\n|   O\n|   |\n|  -|-\n|   |\n|  / \\\n| /\n")
+        elif incorrect_guesses == 10:
+            print("----\n|   O\n|   |\n|  -|-\n|   |\n|  / \\\n| /   \\\n")
+            print("You failed. Prepare to die")
+            
+            
+        
+
+# main
+fname = input("Enter name of file of words: ")
+
+hangman_reader = Hangman_Reader()
+hangman_picker = Hangman_Picker()
+
+# reads in the file and picks a word
+hangman_target = hangman_picker.pick(hangman_reader.read_file(fname))
+
+# initializes the variable for the sketcher to 0
+incorrect_guesses = 0
+hangman_sketcher = Hangman_Sketcher()
+
+# while loop to play the game             
+while hangman_target.is_complete() == False and incorrect_guesses < 10:
+    print(hangman_target.get_target())
+    user_guess = input("Enter your guess: ")
+    correct = hangman_target.check_letter(user_guess)
+    if correct != 0:
+        hangman_sketcher.draw(incorrect_guesses)
+    if correct == 0:
+        incorrect_guesses = incorrect_guesses + 1
+        hangman_sketcher.draw(incorrect_guesses)
+
+if hangman_target.is_complete() == True:
+    print("Congratulations, you solved the puzzle and were spared.")
