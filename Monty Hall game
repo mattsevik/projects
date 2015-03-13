@@ -1,0 +1,104 @@
+import java.util.Random;
+import java.util.Scanner;
+
+public class GameShow {
+
+	public static void main(String[] args) {
+	
+		//Declare variables for user input, randomly generated door, door switching, and continue
+		int userGuess;
+		int prizeDoor;
+		int goatDoor;
+		char switchDoor;
+		char keepPlaying;
+		
+		//do-while loop to continue playing if user chooses
+		do
+		{
+		
+			//Scanner class to get door choice from user
+			Scanner scan = new Scanner(System.in);
+		
+		
+			System.out.println("\n\n*** Welcome to the game show! *** \n" + 
+				"Select the door (1, 2, or 3): ");
+			userGuess = scan.nextInt();
+		
+			//While loop to validate user input for door
+			while (userGuess > 3 || userGuess < 0){
+				System.out.println("Invalid input. Please select the door (1, 2 or 3): ");
+				userGuess = scan.nextInt();
+			}
+		
+			//Random class to randomly assign winning door
+			Random gen = new Random();
+				
+			prizeDoor = gen.nextInt(3) + 1;
+		 			
+			// if statements to figure out the 3rd door after user input and random prize door						
+			boolean doorOne = false; 
+			boolean doorTwo = false;
+
+			if(prizeDoor == 1 || userGuess == 1) {
+				doorOne = true; 
+			} 
+			if(prizeDoor == 1 || userGuess == 1) { 
+				doorTwo = true; 
+			}
+
+			if(doorOne && doorTwo) { 
+				goatDoor = 3; 
+			} 
+			else if(doorOne) { 
+				goatDoor = 2; 
+			} 
+			else { 
+				goatDoor = 1; 
+			}
+		
+			//Output to show user what door they chose and what door goats are behind
+			System.out.println("\nIn a moment, I will show you where the prize is located, \n" 
+					+ "but first I will show you what is behind one of the other doors.");
+			System.out.println("\nBehind door number " + goatDoor + " are goats!");
+			System.out.println("You selected door number " + userGuess);
+		
+			//Ask user if they want to switch doors
+			System.out.println("\nWould you like to switch your door? (y/n) ");
+			switchDoor = scan.next().charAt(0);
+		
+			//while loop to validate user input
+			while (switchDoor != 'y' && switchDoor != 'n'){
+				System.out.println("Invalid input. Please choose either 'y' or 'n'.");
+				switchDoor = scan.next().charAt(0);
+			}
+		
+			//Nested if statements for the user switching doors
+			if (switchDoor == 'y'){
+				if(userGuess + goatDoor == 3){
+					userGuess = 3;
+				}
+				else if(userGuess + goatDoor == 4){
+					userGuess = 2;
+				}
+				else{
+					userGuess = 1;
+				}		
+			}
+		
+			//System output to find out if you win
+			System.out.println("\nThe prize is behind door " + prizeDoor + "!!!");
+			if (userGuess == prizeDoor){
+				System.out.println("Congratulations! You won the prize!");
+			}
+			else{
+				System.out.println("Sorry. You lost.");
+			}
+		
+			//Continue playing the game
+			System.out.println("Would you like to play again? (y/n) ");
+			keepPlaying = scan.next().charAt(0);
+		}
+		while (keepPlaying == 'y');
+	}
+
+}
