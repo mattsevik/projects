@@ -1,0 +1,124 @@
+//Matt Sevik
+
+import javax.swing.JFrame;
+import javax.swing.JApplet;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JButton;
+
+import java.awt.Container;
+import java.awt.BorderLayout;
+import java.awt.Graphics;
+import java.awt.event.*;
+import java.awt.Color;
+
+import java.util.Random;
+class MosaicButtonListener implements ActionListener {
+	private MosaicPanel mp;
+	public MosaicButtonListener(MosaicPanel mp) {
+		this.mp = mp;
+	}
+	public void actionPerformed(ActionEvent e) {
+		mp.buildMosaic();
+		mp.repaint();
+	}
+}
+class MosaicButton extends JButton {
+	private MosaicPanel mp;
+	public MosaicButton(MosaicPanel mp) {
+		this.mp = mp;
+		setText("Press Me");
+		addActionListener(new MosaicButtonListener(mp));
+	}
+}
+class Mosaic {
+	private int rows;
+	private int cols;
+	private int width;
+	private int height;
+	private Random rnd;
+	private Color[] colors;
+	public int getRows() {
+		return rows;
+	}
+	public int getCols() {
+		return cols;
+	}
+	public int getWidth() {
+		return width;
+	}
+	public int getHeight() {
+		return height;
+	}
+	public Color getColor(int r, int c) {
+		return colors[r*cols+c];
+	}
+	public Mosaic() {
+		rows = 10;
+		cols = 10;
+		width = 10;
+		height = 10;
+		rnd = new Random();
+		colors = new Color[rows*cols];
+	}
+	public Mosaic(int rows, int cols, int width, int height) {
+		this.rows = rows;
+		this.cols = cols;
+		this.width = width;
+		this.height = height;
+		colors = new Color[rows*cols];
+		rnd = new Random();
+	}
+	public void buildMosaic() {
+		for (int row = 0; row < rows; row++) {
+			for (int col = 0; col < cols; col++) {
+				colors[row*cols+col] = new Color(rnd.nextInt(256),rnd.nextInt(256),rnd.nextInt(256));
+			}
+		}
+	}
+}
+class MosaicPanel extends JPanel {
+	private Mosaic mo;
+	public MosaicPanel(Mosaic mo) {
+		this.mo = mo;
+	}
+	public void buildMosaic() {
+		mo.buildMosaic();
+	}
+	public void paintComponent(Graphics g) {
+		int w = mo.getWidth();
+		int h = mo.getHeight();
+		for (int r = 0; r < mo.getRows(); r++) {
+			for (int c = 0; c < mo.getCols(); c++) {
+				g.setColor(mo.getColor(r, c));
+				g.fillRect(r*w,c*h,w,h);
+			}
+		}
+	}
+}
+class MosaicFrame extends JFrame {
+	public MosaicFrame(Mosaic md) {
+		Container c = getContentPane();
+		c.setLayout(new BorderLayout());
+		MosaicPanel mp = new MosaicPanel(md);
+		c.add(mp,BorderLayout.CENTER);
+		c.add(new MosaicButton(mp),BorderLayout.SOUTH);
+	}
+}
+public class MosaicMain_Sevik {
+	public void run() {
+		Mosaic mo = new Mosaic(10,10,30,30);
+		MosaicFrame mf = new MosaicFrame(mo);
+		mo.buildMosaic();
+		mf.setBounds(100,100,300,300);
+		mf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		mf.setVisible(true);
+	}
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		MosaicMain_Sevik me = new MosaicMain_Sevik();
+		me.run();
+	}
+
+}
+
